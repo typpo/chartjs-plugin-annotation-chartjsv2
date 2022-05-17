@@ -7,7 +7,7 @@
  * Released under the MIT license
  * https://github.com/chartjs/Chart.Annotation.js/blob/master/LICENSE.md
  */
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 module.exports = function(Chart) {
@@ -27,6 +27,7 @@ module.exports = function(Chart) {
 
 	function draw(drawTime) {
 		return function(chartInstance, easingDecimal) {
+      if (!chartInstance.annotation) return;
 			var defaultDrawTime = chartInstance.annotation.options.drawTime;
 
 			helpers.elements(chartInstance)
@@ -63,7 +64,7 @@ module.exports = function(Chart) {
 		beforeUpdate: function(chartInstance) {
 			var ns = chartInstance.annotation;
 
-			if (!ns.supported) {
+			if (!ns || !ns.supported) {
 				return;
 			}
 
@@ -78,7 +79,7 @@ module.exports = function(Chart) {
 			// Add new elements, or update existing ones
 			ns.options.annotations.forEach(function(annotation) {
 				var id = annotation.id || helpers.objectId();
-				
+
 				// No element with that ID exists, and it's a valid annotation type
 				if (!ns.elements[id] && annotationTypes[annotation.type]) {
 					var cls = annotationTypes[annotation.type];
@@ -115,6 +116,7 @@ module.exports = function(Chart) {
 		afterDatasetsDraw: draw('afterDatasetsDraw'),
 		afterDraw: draw('afterDraw'),
 		afterInit: function(chartInstance) {
+      if (!chartInstance.annotation) return;
 			// Detect and intercept events that happen on an annotation element
 			var watchFor = chartInstance.annotation.options.events;
 			if (chartHelpers.isArray(watchFor) && watchFor.length > 0) {
@@ -129,6 +131,7 @@ module.exports = function(Chart) {
 			}
 		},
 		destroy: function(chartInstance) {
+      if (!chartInstance.annotation) return;
 			var deregisterers = chartInstance.annotation.onDestroy;
 			while (deregisterers.length > 0) {
 				deregisterers.pop()();
@@ -276,6 +279,7 @@ module.exports = function(Chart) {
 function noop() {}
 
 function elements(chartInstance) {
+  if (!chartInstance.annotation) return [];
 	// Turn the elements object into an array of elements
 	var elements = chartInstance.annotation.elements;
 	return Object.keys(elements).map(function(id) {

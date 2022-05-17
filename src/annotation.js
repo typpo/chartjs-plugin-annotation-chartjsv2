@@ -15,6 +15,7 @@ module.exports = function(Chart) {
 
 	function draw(drawTime) {
 		return function(chartInstance, easingDecimal) {
+      if (!chartInstance.annotation) return;
 			var defaultDrawTime = chartInstance.annotation.options.drawTime;
 
 			helpers.elements(chartInstance)
@@ -51,7 +52,7 @@ module.exports = function(Chart) {
 		beforeUpdate: function(chartInstance) {
 			var ns = chartInstance.annotation;
 
-			if (!ns.supported) {
+			if (!ns || !ns.supported) {
 				return;
 			}
 
@@ -66,7 +67,7 @@ module.exports = function(Chart) {
 			// Add new elements, or update existing ones
 			ns.options.annotations.forEach(function(annotation) {
 				var id = annotation.id || helpers.objectId();
-				
+
 				// No element with that ID exists, and it's a valid annotation type
 				if (!ns.elements[id] && annotationTypes[annotation.type]) {
 					var cls = annotationTypes[annotation.type];
@@ -103,6 +104,7 @@ module.exports = function(Chart) {
 		afterDatasetsDraw: draw('afterDatasetsDraw'),
 		afterDraw: draw('afterDraw'),
 		afterInit: function(chartInstance) {
+      if (!chartInstance.annotation) return;
 			// Detect and intercept events that happen on an annotation element
 			var watchFor = chartInstance.annotation.options.events;
 			if (chartHelpers.isArray(watchFor) && watchFor.length > 0) {
@@ -117,6 +119,7 @@ module.exports = function(Chart) {
 			}
 		},
 		destroy: function(chartInstance) {
+      if (!chartInstance.annotation) return;
 			var deregisterers = chartInstance.annotation.onDestroy;
 			while (deregisterers.length > 0) {
 				deregisterers.pop()();
