@@ -13,6 +13,9 @@
     "test": "gulp jshint",
     "build": "gulp build"
   },
+  "overrides": {
+    "graceful-fs": "^4.2.10"
+  },
   "devDependencies": {
     "browserify": "^13.0.0",
     "gulp": "^3.9.1",

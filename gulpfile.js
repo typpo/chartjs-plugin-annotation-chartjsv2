@@ -36,7 +36,7 @@ gulp.task('watch', watchTask);
 
 function buildTask() {
   var nonBundled = browserify('./src/index.js')
-    .ignore('chart.js')
+    //.ignore('chart.js')
     .ignore('hammerjs')
     .bundle()
     .pipe(source('chartjs-plugin-annotation.js'))
@@ -77,7 +77,7 @@ function bumpTask(complete) {
 
     // Write these to their own files, then build the output
     fs.writeFileSync('package.json', JSON.stringify(package, null, 2));
-    
+
     complete();
   });
 }
